@@ -14,7 +14,7 @@
     } from '@skeletonlabs/skeleton';
 
     import type { Root, Salary } from '../../models/infojobs';
-	import { get } from 'lodash';
+	import { get, last } from 'lodash';
 	import type { TLastSearch } from '../../models/lastsearch';
 
     let valueMin    = 0;
@@ -22,39 +22,6 @@
     let max         = 100;
     let min         = max;
 
-    let flavorDenylist: AutocompleteOption[] = [
-        {
-            label: 'PHP',
-            value: 'php',
-            keywords: ['php', 'php7', 'php8', 'php 7', 'php 8'],
-            meta: {
-                description: 'PHP es un lenguaje de programación de uso general de código del lado del servidor originalmente diseñado para el desarrollo web de contenido dinámico.',
-                url: 'https://www.php.net/',
-            },
-        },
-        {
-            label: 'HTML',
-            value: 'html',
-            keywords: ['php', 'php7', 'php8', 'php 7', 'php 8'],
-            meta: {
-                description: 'PHP es un lenguaje de programación de uso general de código del lado del servidor originalmente diseñado para el desarrollo web de contenido dinámico.',
-                url: 'https://www.php.net/',
-            },
-        }
-    ];
-
-    let popupSettings: PopupSettings = {
-        event       : 'focus-click',
-        target      : 'popupAutocomplete',
-        placement   : 'bottom',
-    };
-
-    function onPopupDemoSelect(event: CustomEvent) {
-
-        console.log(event.detail);
-
-        keywords = event.detail.value;
-    }
 
     let checked: boolean = false;
 
@@ -114,36 +81,19 @@
         },
     ]
 
-    // let empleos = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-    let page = {
-        offset      : 0,
-        limit       : 5,
-        size        : empleos2.length,
-        amounts     : [1,2,5,10],
-    };
-
     let value: boolean = false;
 
     function handleEmpleoSelected(event: Event, empleo: any) {
 
         console.log('handleEmpleoSelected');
         event.stopPropagation();
-        
 
-        // if ( empleo.selected === '' )
-        //     empleo.selected = 'bg-surface-800';
-        // else
-        //     empleo.selected = '';
-
-        // empleo.selected = !empleo.selected;
         empleos2[empleo].selected = !empleos2[empleo].selected;
 
         console.log(empleo);
     }
 
 
-    let valueRange: number = 50;
 
 
 
@@ -163,40 +113,97 @@
 
     // e39b69f8564388a5af392b817606d9
 
-    let lastSearches: TLastSearch[] = [];
+    let lastSearches    : TLastSearch;
+    let lastSerchAuto   : AutocompleteOption[]  = [];
+
+    let popupSettings: PopupSettings = {
+        event       : 'focus-click',
+        target      : 'popupAutocomplete',
+        placement   : 'bottom',
+    };
+
+
+
+    function onPopupSelect(event: CustomEvent) {
+        keywords = event.detail.value;
+    }
+
     onMount(() => {
 
         getSearchRecent();
 
     });
 
-    async function getSearchRecent() {
+    async function getSearchRecent(): Promise<void> {
         const res       = await fetch(`https://www.infojobs.net/webapp/offers/search/last-searches`);
         const last      = await res.json();
         lastSearches    = last;
-        console.log(last);
+        lastSerchAuto   = onConvertToAutoCompleteOption( lastSearches );
+        console.log( 'lastSearches', lastSearches );
+        console.log( 'lastSerchAuto', lastSerchAuto );
     }
 
-    let keywords  = '';
-    let jobs: Root | null = null;
+    function onConvertToAutoCompleteOption( lastSearch: TLastSearch ): AutocompleteOption[] {
+
+        return lastSearch.map( last => ({
+            label       : last.text,
+            value       : last.text,
+            keywords    : [last.text],
+        } as AutocompleteOption ));
+
+    }
+
+    let keywords    = '';
+    let jobs        : Root = {} as Root;
+    let jobOffers   : Root = {} as Root;
+
+    let page = {
+        offset      : 0,
+        limit       : 10,
+        size        : jobOffers?.offers?.length ?? 0,
+        amounts     : [5, 10, 15, 20, 30]
+    };
+
+    function changePage( event: CustomEvent ) {
+        console.log(page);
+
+        const offset    = page.offset * page.limit;
+        const limit     = page.limit + offset;
+
+        jobs.offers = jobOffers.offers.slice(offset, limit);
+    }
 
     async function getJobs( event: Event ): Promise<void> {
         event.stopPropagation();
-        const res = await fetch(`https://www.infojobs.net/webapp/offers/search?keyword=${keywords}&onlyForeignCountry=false`);
-        // const res = await fetch(`https://www.infojobs.net/webapp/offers/search?keyword=${keywords}&normalizedJobTitleIds=&provinceIds=&onlyForeignCountry=false`);
-        jobs = await res.json();
+        const res   = await fetch(`https://www.infojobs.net/webapp/offers/search?keyword=${keywords}&onlyForeignCountry=false`);
+        jobs        = await res.json();
 
         if ( !jobs?.offers ) return;
 
-        jobs.offers.forEach( job => {
-            getMatch( job.code ).then( match => {
-                job.match = match;
-            });
-        });
+        const offset    = page.offset * page.limit;
+        const limit     = page.limit + offset;
 
+        jobs = jobOffers;
+
+        const values = jobs?.offers
+        .slice(offset, limit)
+        .map( offer => ({
+            ...offer,
+            // selected    : false,
+            match       : getMatch( offer.code ).then( match => match )
+        }));
+
+        // .forEach( job => {
+        //     getMatch( job.code ).then( match => {
+        //         job.match = match;
+        //     });
+        // });
 
         console.log(jobs);
+        console.log(values);
     }
+
+    let valueRange: number = 50;
 
     async function getMatch( code: string ): Promise<any> {
         const match = await fetch(`https://www.infojobs.net/candidate/match?offerCode=${code}`);
@@ -250,8 +257,8 @@
     <hr class="bg-white mb-2">
 
     <Autocomplete
-        options         = {flavorDenylist}
-        on:selection    = {onPopupDemoSelect}
+        options         = {lastSerchAuto}
+        on:selection    = {onPopupSelect}
         bind:input      = {keywords}
 	/>
 </div>
@@ -405,6 +412,11 @@
                 </div>
         {/each}
 
-        <Paginator bind:settings={page}></Paginator>
+        <!-- /** {{ length: number }} amount - Fires when the amount selection input changes.*/
+        amount: CustomEvent<any>;
+        /** {{ offset: number }} page Fires when the next/back buttons are pressed.*/
+        page: CustomEvent<any>; -->
+
+        <Paginator bind:settings={page} on:page={changePage} on:amount={changePage}></Paginator>
     </div>
 </div>
