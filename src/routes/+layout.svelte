@@ -27,29 +27,21 @@
 					href="/"
 					rel="prefetch"
 				>
-					Discord
+					Inicio
 				</a>
 				<a
 					class	= "btn btn-sm variant-ghost-surface"
 					href	= "job"
 					rel		= "prefetch"
 				>
-					Twitter
+					Publicación
 				</a>
 				<a
 					class="btn btn-sm variant-ghost-surface"
-					href="https://github.com/skeletonlabs/skeleton"
-					target="_blank"
-					rel="noreferrer"
-				>
-					GitHub
-				</a>
-				<a
-					class="btn variant-filled"
-					href='/profile'
+					href="job-application"
 					rel="prefetch"
-				> 
-					Profile
+				>
+					Postulación
 				</a>
 			</svelte:fragment>
 		</AppBar>
@@ -58,8 +50,4 @@
 	<slot />
 </AppShell>
 
-<div class="card p-4 w-72 shadow-xl" data-popup="popupFeatured">
-    <div><p>Demo Content</p></div>
-    <div class="arrow bg-surface-100-800-token" />
-</div>
 <Toast />
