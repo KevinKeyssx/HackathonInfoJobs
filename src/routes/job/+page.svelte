@@ -1,7 +1,6 @@
 <script lang="ts">
 
     import { debounce } from 'lodash';
-    import { Configuration, OpenAIApi } from 'openai';
     import {
         Accordion,
         AccordionItem,
@@ -10,10 +9,12 @@
         popup,
         toastStore,
         type PopupSettings,
-    } from '@skeletonlabs/skeleton';
+    }               from '@skeletonlabs/skeleton';
+    import View     from '../../lib/components/view/view.svelte';
+	import axios    from 'axios';
 
-	import type { TJob } from '../../models/jobs';
-    import View from '../../lib/components/view/view.svelte';
+    import type { TJob } from '../../models/jobs';
+
 
     const sendHttpRequest = debounce(async() => {
 
@@ -21,45 +22,16 @@
 
         job.description.isLoaded = true;
 
-        const configuration = new Configuration({
-            apiKey: '',
-        });
+        const params = {
+            description: job.description.prompt
+        };
 
-        const openai    = new OpenAIApi( configuration );
+        const response  = await axios.get('api/chatgpt', {params});
+        const data      = JSON.parse(response.data.response || '{}');
 
-        console.log(job.description);
-
-        const responsed = await openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: `Comportate como si fueras un evaluador de descripciones de puestos de trabajo, tienes que puntuarlas del 0 al 5 donde 0 es muy mala y 5 es excelente y dar observaciones de como mejorarla,
-            tienes que fijarte en la claridad de la descripción, que sea fácil de entender, que sea fácil de leer, que no tenga errores de ortografía,
-            prioriza en que tenga no tenga ningún otro contexto que no sea el puesto de trabajo y que tiene que decir exactamente lo que se necesita para el puesto de trabajo mientras más información exista en esto suma más puntos en la puntuación,
-            no está demá que se mencione la empresa pero sea muy breve y que sea motivacional,
-            como recomendación indica que no es necesario ingresar la información de la empresa, ni los beneficios que entrega, ni el salario ya que esta información se ingresa en otros campos si agrega estos puntos baja el puntaje de stars,
-            lo importante es la función y los roles que debe realizar en el puesto de trabajo
-            ejemplo "${job.description.prompt}"
-            Tu respuesta debe ser 
-            {
-            "stars": 0,
-            "message": "tus observaciones de la descripción y una sugerencia de como megorarla"
-            }
-            El valor de stars dependerá de lo dicho anteriormente, y el valor de message serán tus observaciones con respecto a la descripción del puesto y una sugerencia de como mejorarla
-            solo debes responder en este formato tanto en inglés como en español:
-            {
-            "stars": 0,
-            "message": "tus observaciones de la descripción y una sugerencia de como megorarla"
-            } `,
-            max_tokens: 1000,
-            temperature: 0,
-        });
-
-        const response = JSON.parse(responsed.data.choices[0].text || '{}');
-
-        job.description.stars   = response.stars;
-        job.description.message = response.message;
-        job.description.isLoaded = false;
-
-        console.log(response);
+        job.description.stars       = data.stars;
+        job.description.message     = data.message;
+        job.description.isLoaded    = false;
 
     }, 1000 );
 
@@ -262,7 +234,7 @@
 </style>
 
 <div class="flex">
-    <div class="w-2/3">
+    <div class="lg:w-2/4 xl:w-2/3">
         <div class="flex items-center justify-center  ">
             <div class="shadow-xl rounded px-8 py-6 w-11/12">
                     <label class="label" use:popup={popupFeatured}>
@@ -281,7 +253,7 @@
                                 <span>Información general:</span>
                             </svelte:fragment>
                             <svelte:fragment slot="content">
-                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
                                     <label class="label">
                                         <span>Cuidad:</span>
                                         <select class="select rounded-3xl" bind:value={job.city}>
@@ -360,7 +332,7 @@
                                         />
                                     </label>
                                 </div>
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4"> 
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"> 
             
                                     <label class="label">
                                         <span>Salario mínimo:</span>
@@ -395,7 +367,7 @@
                                         </div>
                                     </label>
             
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4">
             
                                         <label class="label">
                                             <span>Tipo:</span>
@@ -440,7 +412,6 @@
                         </AccordionItem>
 
                     <AccordionItem open>
-                        <!-- <svelte:fragment slot="lead">(icon)</svelte:fragment> -->
                         <svelte:fragment slot="summary">
                             <div class="flex justify-between">
                                 <span class="text-left mt-1">Conocimientos necesarios</span>
@@ -455,7 +426,7 @@
 
                         </svelte:fragment>
                         <svelte:fragment slot="content">
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                                 {#each job.knowledges as item, index }
                                     <label class="label">
                                         {#if index === 0 }
@@ -531,7 +502,6 @@
                     </AccordionItem>
 
                     <AccordionItem>
-                        <!-- <svelte:fragment slot="lead">(icon)</svelte:fragment> -->
                         <svelte:fragment slot="summary">
                             <div class="flex justify-between">
                                 <span class="text-left mt-1">Estudios mínimos</span>
@@ -546,7 +516,7 @@
                             
                         </svelte:fragment>
                         <svelte:fragment slot="content">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4">
                                 {#each job.minimumStudies as item, index }
                                     <label class="label">
                                         {#if index === 0 }
@@ -611,7 +581,7 @@
                     <p class="text-sm text-right">{job.description.prompt.length}/1000</p>
                 </label>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                     <label class="label">
                         <span>Requisitos deseables</span>
                         <input class=" display-none" type="email" name="" id="">
@@ -663,7 +633,7 @@
 
                 <h3 class=" text-lg font-bold mt-5">Información opcional</h3>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"> 
+                <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4"> 
                     <label class="label">
                         <span>Tareas y responsabilidades:</span>
                         <input class="display-none">
@@ -711,7 +681,7 @@
                         </svelte:fragment>
                         <svelte:fragment slot="content">
                             {#if job.customInfo}
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4">
                                 {#each job.customInfo as item, index }
                                     <label class="label">
                                         {#if index === 0 }
@@ -779,7 +749,7 @@
                             <span >Tipo de oferta:</span>
                         </svelte:fragment>
                         <svelte:fragment slot="content">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 xl:grid-cols-2 lg:grid-cols-1 gap-4">
                                 <label class="label">
                                     <span>Tipo de industria de la oferta:</span>
                                     <select class="select rounded-3xl" bind:value={job.typeOfIndustry}>
@@ -830,7 +800,7 @@
         </div>
     </div>
 
-    <div class="w-1/3">
+    <div class="lg:w-1/2 xl:w-1/3">
         <View
             {...job}
         />
