@@ -15,7 +15,6 @@
 
     import type { TJob } from '../../models/jobs';
 
-
     const sendHttpRequest = debounce(async() => {
 
         if ( job.description.prompt.length < 100 ) return;
@@ -233,7 +232,7 @@
     }
 </style>
 
-<div class="flex">
+<div class="flex mt-5">
     <div class="lg:w-2/4 xl:w-2/3">
         <div class="flex items-center justify-center  ">
             <div class="shadow-xl rounded px-8 py-6 w-11/12">
