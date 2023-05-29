@@ -9,14 +9,17 @@ InfoJobs es una plataforma de empleo líder en España, con más de 3 millones d
 
 ## 📌 Tabla de Contenidos
 ***
-- [Descripción](#-descripción)
-- [Soluciones](#-soluciones)
-- [Tecnologías](#-tecnologías)
-- [Instalación](#-instalación)
-- [Licencia](#-licencia)
-- [Contribuciones](#-contribuciones)
-- [Contacto](#-contacto)
-- [Conclusiones](#-conclusiones)
+- [ JobEase](#-jobease)
+  - [Simplifica y Mejora tu Experiencia de Búsqueda y Postulación de Empleo. Prueba la nueva app aquí ➡️ JobEase](#simplifica-y-mejora-tu-experiencia-de-búsqueda-y-postulación-de-empleo-prueba-la-nueva-app-aquí-️-jobease)
+  - [💫 Potenciado por InfoJobs](#-potenciado-por-infojobs)
+  - [📌 Tabla de Contenidos](#-tabla-de-contenidos)
+  - [💣 Publicación simplificada de empleos](#-publicación-simplificada-de-empleos)
+  - [❤️ Mejora en la postulación](#️-mejora-en-la-postulación)
+  - [🚀 Tecnologías](#-tecnologías)
+  - [📌 Instalación](#-instalación)
+  - [📝 Licencia](#-licencia)
+  - [🤝 Contribuciones](#-contribuciones)
+  - [🔥 Conclusiones](#-conclusiones)
 
 ## 💣 Publicación simplificada de empleos
 ***
@@ -24,8 +27,7 @@ InfoJobs es una plataforma de empleo líder en España, con más de 3 millones d
 Nuestra solución simplifica el proceso de publicación de empleos en InfoJobs. Ahora, la persona encargada no tiene que
 escribir largos textos, sino que se guía a través de un formulario intuitivo. Además, hemos incorporado una tabla con
 los requisitos necesarios clasificados por niveles, lo que nos permite ahorrar espacio y hacer la publicación más
-concisa. Todo esto se complementa con el uso de diseños personalizados utilizando Tailwind CSS para mejorar la
-visualización de los empleos y facilitar la lectura.
+concisa.
 
 Además, hemos incorporado inteligencia artificial para ayudar a mejorar las descripciones de los empleos. Ofrecemos
 consejos y sugerencias para optimizar la redacción, brindando una calificación del 0 al 5 estrellas para evaluar la

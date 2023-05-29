@@ -264,7 +264,7 @@
 
         <button
             type        = "button"
-            class       = "btn btn-sm mt-3 variant-filled"
+            class       = "btn btn-sm mt-3 variant-ghost-primary ml-auto"
             on:click    = {searchCompatibility}
         >
             Buscar compatibilidad
@@ -275,6 +275,7 @@
             bind:checked    = {isSelectedAll}
             label           = "Seleccionar todos"
             class           = "mt-5 mb-3 w-full"
+            active          = "bg-primary-500"
             on:change       = {() => selectedAll()}
         >
             Seleccionar todos
@@ -282,7 +283,7 @@
 
         <button
             type        = "button"
-            class       = "btn btn-sm mt-1 variant-filled ml-auto"
+            class       = "btn btn-sm mt-1 ml-auto variant-ghost-tertiary"
             disabled    = {offers.every( em => !em.selected)}
             on:click    = {( event ) => sendApplication(event, true)}
         >
