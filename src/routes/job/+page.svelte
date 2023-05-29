@@ -232,6 +232,10 @@
     }
 </style>
 
+<svelte:head>
+	<title>JobEase | Publicación</title>
+</svelte:head>
+
 <div class="flex mt-5">
     <div class="lg:w-2/4 xl:w-2/3">
         <div class="flex items-center justify-center  ">

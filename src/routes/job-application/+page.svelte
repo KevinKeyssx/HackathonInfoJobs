@@ -194,6 +194,10 @@
 
 </script>
 
+<svelte:head>
+	<title>JobEase | Postulación</title>
+</svelte:head>
+
 <div class="card p-4 w-72 shadow-xl" data-popup="popupAutocomplete">
     {#if lastSerchAuto.length > 0}
         <Autocomplete
