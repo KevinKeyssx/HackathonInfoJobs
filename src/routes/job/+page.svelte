@@ -603,7 +603,7 @@
 
                     <label class="label">
                         <span>Habilidades:</span>
-                        <input class=" display-none" type="email" name="" id="">
+                        <input class="display-none" />
                         <InputChip 
                             allowUpperCase
                             bind:value  = {job.skills}
@@ -619,7 +619,7 @@
 
                     <label class="label">
                         <span>Beneficios y compensaciones</span>
-                        <input class=" display-none" type="email" name="" id="">
+                        <input class="display-none" />
                         <InputChip
                             allowUpperCase
                             bind:value  = {job.benefits}
@@ -629,7 +629,7 @@
                             max         = {validInputChip.max}
                             minlength   = {validInputChip.minlength}
                             name        = "benefits"
-                            placeholder = "Benficios..."
+                            placeholder = "Beneficios..."
                         />
                     </label>
                 </div>
@@ -639,7 +639,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-4"> 
                     <label class="label">
                         <span>Tareas y responsabilidades:</span>
-                        <input class="display-none">
+                        <input class="display-none" />
                         <InputChip 
                             bind:value      = {job.dailyTasks}
                             on:invalid      = {(event) => onInvalidHandler(event, job.dailyTasks??[])}
